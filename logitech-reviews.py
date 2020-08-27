@@ -7,12 +7,16 @@ import math
 reviews = []
 res = requests.get(
     'https://www.amazon.in/Logitech-B170-Wireless-Mouse-Black/product-reviews/B01J0XWYKQ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews')
+print(res.url)
+# print(res.content)
+
 response = HtmlResponse(url=res.url, body=res.content)
 product_name = response.xpath('//h1/a/text()').extract_first(default=' ').strip()
 total_reviews = response.xpath('//span[contains(text(),"Showing")]/text()').extract_first(default='').strip().split()
 total_reviews = total_reviews[-2]
 total_reviews = int(total_reviews.replace(',', '').strip())
 reviews_per_page = math.ceil(int(total_reviews) / 10)
+print("Total no of papges need to be scraped: " + str(reviews_per_page))
 
 for i in range(0, reviews_per_page):
     time.sleep(1)
@@ -20,9 +24,10 @@ for i in range(0, reviews_per_page):
         url1 = f'https://www.amazon.in/Logitech-B170-Wireless-Mouse-Black/product-reviews/B01J0XWYKQ/ref=cm_cr_arp_d_paging_btm_next_{str(i + 1)}?ie=UTF8&reviewerType=all_reviews&pageNumber={str(i + 1)}'
         res = requests.get(url1)
         response = HtmlResponse(url=res.url, body=res.content)
-        loop = response.xpath('//div[contains(@class,"a-section review")]')
+        print( response.xpath('//span[contains(text(),"Showing")]/text()').extract_first(default=''))
+        reviews_per_req = response.xpath('//div[contains(@class,"a-section review")]')
 
-        for part in loop:
+        for part in reviews_per_req:
             # review_title = part.xpath('.//a[contains(@Class,"review-title-content")]/span/text()').extract_first(
             #     default=' ').strip()
             #
@@ -40,7 +45,7 @@ for i in range(0, reviews_per_page):
             df = pd.DataFrame(reviews,
                               columns=['ReviewerName', 'Description'])
             # exporting csv
-            df.to_csv("./amazon-reviews.csv", index=False)
+            df.to_csv("./amazon-reviews-new.csv", index=False, encoding='utf-8-sig')
 
     except requests.exceptions.HTTPError as e:
         print(e.response.text)
