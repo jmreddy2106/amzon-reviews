@@ -15,7 +15,6 @@ valance_val_per['%_of_Labels'] = normalized_label.values()
 
 custom_colors = [plt.cm.tab20(np.arange(len(valance_val_per)))]
 
-
 ax = valance_val_per.plot(kind='barh', legend=False, figsize=(12, 8), color=custom_colors)
 ax.set_alpha(0.8)
 ax.set_title("% of Labels of Polarity Score ", fontsize=18)
