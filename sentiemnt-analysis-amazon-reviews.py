@@ -31,7 +31,8 @@ for sentence in review_sentences:
     try:
         sentence = re.sub(emoji.get_emoji_regexp(), r"", sentence)
         sentence = re.sub(url_reg, '', sentence)
-        if sentence and not sentence == 'NULL':
+        sentence = re.sub(r"•", '', sentence)
+        if sentence:
             clean_sent.append(sentence)
             sentence_score(sentence)
     except re.error:
